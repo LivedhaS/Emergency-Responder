@@ -1,0 +1,113 @@
+/* General Styling */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+/* Centered Container */
+.container {
+    background: #fff;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(255, 255, 255, 0.2);
+    text-align: center;
+    width: 450px;
+    box-sizing: border-box;
+}
+
+/* Heading */
+h2 {
+    margin-bottom: 20px;
+    font-size: 2em;
+    font-weight: bold;
+    color: #333;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* Paragraph */
+p {
+    font-size: 1.1em;
+    color: #555;
+    margin-bottom: 25px;
+    line-height: 1.6;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Buttons Row */
+.button-row {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+/* Shared Button Styles */
+.upload-btn,
+.aid-btn,
+.wound-btn,
+.patient-btn {
+    padding: 16px;
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #007bff;
+    background: #f0f8ff;
+    border: 2px solid #007bff;
+    border-radius: 10px;
+    text-align: center;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+}
+
+.upload-btn:hover,
+.aid-btn:hover,
+.wound-btn:hover,
+.patient-btn:hover
+{
+    background: #007bff;
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* Logout Button */
+#logout,
+.logout-btn {
+    width: 100%;
+    margin-top: 10px;
+    padding: 15px;
+    font-size: 1.1em;
+    font-weight: bold;
+    color: white;
+    background: #dc3545;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    text-decoration: none;
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+}
+
+#logout:hover,
+.logout-btn:hover {
+    background: #b02a37;
+    transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container {
+        width: 90%;
+        padding: 30px;
+    }
+
+    .button-row {
+        flex-direction: column;
+    }
+}

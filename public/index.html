@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Burns Information</title>
+    <link rel="stylesheet" href="index.css">  <!-- Ensure the correct path -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Inside the <head> tag -->
+
+
+    <style>
+        /* Chatbot Button */
+/* Positioning both buttons properly */
+.chatbot-btn, .emergency-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    color: white;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    gap: 8px; 
+}
+
+/* Chatbot Button Styling */
+.chatbot-btn {
+    background-color: #007bff; /* Blue */
+}
+
+/* Emergency Button Styling */
+.emergency-btn {
+    background-color: #dc3545; /* Red */
+    bottom: 80px; /* Slightly above chatbot button */
+
+}
+
+
+        /* Chatbot Popup */
+        .chatbot-container {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 350px;
+            height: 500px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            display: none;
+            flex-direction: column;
+        }
+
+        /* Chatbot Close Button */
+        .chatbot-header {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            right: 10px;
+            top: 5px;
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: white;
+            cursor: pointer;
+        }
+
+        /* Chatbot Message Area */
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            height: 350px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Chatbot Input */
+        .chat-input {
+            display: flex;
+            border-top: 1px solid #ddd;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            outline: none;
+        }
+
+        .chat-input button {
+            background: blue;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        /* Chat Messages */
+        .message {
+            padding: 8px;
+            border-radius: 5px;
+            margin: 5px 0;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        .user {
+            align-self: flex-end;
+            background-color: #007bff;
+            color: white;
+        }
+
+        .bot {
+            align-self: flex-start;
+            background-color: #007bff;
+        }
+        
+
+        /* Emergency Modal (Popup) */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            width: 400px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal h2 {
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .find-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            width: 100%;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .find-btn:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .close-btn {
+            background: red;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        .close-btn:hover {
+            background: darkred;
+        }
+
+        .contact {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f8f8f8;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 5px 0;
+        }
+
+        .contact span {
+            font-size: 16px;
+            font-weight: 500;
+            color: #444;
+            display: flex;
+            align-items: center;
+        }
+
+        .contact a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .contact a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Existing Content -->
+    <div class="container">
+        <h1>Burns: Understanding & Treatment</h1>
+        <p>Your go-to resource for information about burns, their symptoms, treatment, and prevention.</p>
+
+        <div class="button-container">
+            <a href="login.html" class="btn">Login</a>
+            <a href="register.html" class="btn">Register</a>
+            <a href="resources.html" class="btn">Resources Page</a>
+            
+            
+
+        
+        </div>
+    </div>
+        <!-- Overview Section -->
+    <div class="overview">
+        <h2>🔥 Overview</h2>
+        <p>Burns are injuries caused by heat, chemicals, electricity, sunlight, or radiation. They range from mild to life-threatening and require appropriate care.</p>
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="faq">
+        <h2>Frequently Asked Questions</h2>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleAnswer(0)">
+                <span>🩹 What should I do immediately after getting a burn?</span>
+                <span>&#9662;</span>
+            </div>
+            <div class="faq-answer">
+                Cool the burn under running water for at least 10 minutes and cover it with a clean cloth.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleAnswer(1)">
+                <span>📌 When should I seek medical help for a burn?</span>
+                <span>&#9662;</span>
+            </div>
+            <div class="faq-answer">
+                If the burn is deep, larger than a palm, or located on the face, hands, feet, or genitals.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleAnswer(2)">
+                <span>⚠ Is it safe to pop burn blisters?</span>
+                <span>&#9662;</span>
+            </div>
+            <div class="faq-answer">
+                No. Let blisters heal naturally to avoid infection.
+                
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleAnswer(3)">
+                <span>🔴 How can I find the nearest burn treatment center?</span>
+                <span>&#9662;</span>
+            </div>
+            <div class="faq-answer">
+                Severe burns can lead to:
+                Use the “Find Nearby Hospitals” option and select “Burn Unit” in the specialties dropdown.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleAnswer(4)">
+                <span>💊Is the emergency chatbot available 24/7?</span>
+                <span>&#9662;</span>
+            </div>
+            <div class="faq-answer">
+                Yes, the chatbot is AI-powered and always ready to assist with burn-related queries.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleAnswer(5)">
+                <span>⚡ What if someone is unconscious after a burn incident?</span>
+                <span>&#9662;</span>
+            </div>
+            <div class="faq-answer">
+                Check responsiveness, breathing, and pulse. Call emergency services and begin CPR if needed.
+            </div>
+        </div>
+    </div>
+        <script>
+        function toggleAnswer(index) {
+            const answers = document.querySelectorAll('.faq-answer');
+            const icons = document.querySelectorAll('.faq-question span:last-child');
+
+            if (answers[index].style.display === 'block') {
+                answers[index].style.display = 'none';
+                icons[index].innerHTML = '&#9662;';
+            } else {
+                answers[index].style.display = 'block';
+                icons[index].innerHTML = '&#9652;';
+            }
+        }
+    </script>
+<p id="healthTip"></p>
+<script>
+    const tips = [
+        "Drink 8 glasses of water daily!",
+        "Get at least 7 hours of sleep.",
+        "Exercise for 30 minutes every day!",
+        "Avoid junk food & eat fresh vegetables."
+    ];
+    document.getElementById("healthTip").innerText = 
+        tips[Math.floor(Math.random() * tips.length)];
+</script>
+
+
+    <!-- Chatbot Button -->
+    <button class="chatbot-btn" onclick="toggleChatbot()">💬 Chat with us</button>
+    <button class="emergency-btn" onclick="openModal()">🚨 Emergency</button>
+    
+    <!-- Chatbot Container -->
+    <div class="chatbot-container" id="chatbot">
+        <div class="chatbot-header">
+            Chatbot
+            <button class="close-btn" onclick="toggleChatbot()">✖</button>
+        </div>
+        <div class="chat-messages" id="messages"></div>
+        <div class="chat-input">
+            <input type="text" id="userInput" placeholder="Type a message..." onkeypress="handleKeyPress(event)">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleChatbot() {
+            const chatbot = document.getElementById("chatbot");
+            chatbot.style.display = chatbot.style.display === "flex" ? "none" : "flex";
+        }
+
+        async function sendMessage() {
+            const userInput = document.getElementById("userInput").value.trim();
+            if (!userInput) return;
+
+            const messagesDiv = document.getElementById("messages");
+
+            // Append User Message
+            messagesDiv.innerHTML += `<div class="message user"><strong>You:</strong> ${userInput}</div>`;
+            document.getElementById("userInput").value = "";
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+            // Replace with your actual API key
+            const API_KEY = "AIzaSyD2_9YRlBiM_K50zgWBlYfq4rPNZjCLCnw"; 
+            const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        contents: [{ role: "user", parts: [{ text: userInput }] }]
+                    })
+                });
+
+                const data = await response.json();
+                console.log("API Response:", data);
+
+                let reply = "Sorry, I couldn't process that.";
+
+                if (data && data.candidates && data.candidates.length > 0) {
+                    if (data.candidates[0].content && data.candidates[0].content.parts.length > 0) {
+                        reply = data.candidates[0].content.parts[0].text;
+                    }
+                }
+
+                // Append Bot Message
+                messagesDiv.innerHTML += `<div class="message bot"><strong>Bot:</strong> ${reply}</div>`;
+            } catch (error) {
+                console.error("Error:", error);
+                messagesDiv.innerHTML += `<div class="message bot"><strong>Bot:</strong> Error processing request.</div>`;
+            }
+
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+        }
+    </script>
+    <!-- Emergency Modal (Popup) -->
+    <div id="emergencyModal" class="modal">
+        <div class="modal-content">
+            <h2>Emergency Response</h2>
+            <button class="find-btn" onclick="findHospitals()">Find Nearby Hospitals</button>
+            <button class="find-btn" onclick="sendWhatsAppSOS()">Send SOS via Whatsapp</button>
+            <div class="emergency">
+                <h3>Emergency Contacts</h3>
+
+                <div class="contact">
+                    <span>🚑 Ambulance</span>
+                    <a href="tel:108">Call 108</a>
+                </div>
+
+                <div class="contact">
+                    <span>🚔 Police</span>
+                    <a href="tel:100">Call 100</a>
+                </div>
+
+                <div class="contact">
+                    <span>🔥 Fire Department</span>
+                    <a href="tel:101">Call 101</a>
+                </div>
+            </div>
+
+            <button class="close-btn" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        function openModal() {
+            document.getElementById("emergencyModal").style.display = "flex";
+        }
+
+        function closeModal() {
+            document.getElementById("emergencyModal").style.display = "none";
+        }
+
+        function findHospitals() {
+            
+            window.location.href = 'hospital.html';
+        
+        }
+        function sendWhatsAppSOS() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((position) => {
+                    let latitude = position.coords.latitude;
+                    let longitude = position.coords.longitude;
+                    let message = encodeURIComponent(`🚨 SOS Emergency!\n\nMy Location: https://www.google.com/maps?q=${latitude},${longitude}`);
+                    let phoneNumber = "9840712552"; // Replace with emergency contact number
+                    window.open(`https://wa.me/${phoneNumber}?text=${message}`, "_blank");
+                }, () => {
+                    alert("Unable to get location. Please enable GPS.");
+                });
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+    </script>
+    <script>
+        function sendWhatsAppSOS() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((position) => {
+                    let latitude = position.coords.latitude;
+                    let longitude = position.coords.longitude;
+                    let message = encodeURIComponent(`🚨 SOS Emergency!\n\nMy Location: https://www.google.com/maps?q=${latitude},${longitude}`);
+                    let phoneNumber = "9840712552"; // Replace with emergency contact number
+                    window.open(`https://wa.me/${phoneNumber}?text=${message}`, "_blank");
+                }, () => {
+                    alert("Unable to get location. Please enable GPS.");
+                });
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+    </script>
+
+</body>
+</html>

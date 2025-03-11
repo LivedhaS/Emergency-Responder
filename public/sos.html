@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Burn Emergency Response</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Inside the <head> tag -->
+
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #181818;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 400px;
+        }
+
+        h2 {
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: inline-block;
+            text-decoration: none;
+            width: 100%;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .sos-btn {
+            background-color: red;
+        }
+
+        .sos-btn:hover {
+            background-color: darkred;
+        }
+
+        .emergency {
+            margin-top: 20px;
+        }
+
+        .emergency h3 {
+            font-size: 18px;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .contact {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f8f8f8;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 5px 0;
+        }
+
+        .contact span {
+            font-size: 16px;
+            font-weight: 500;
+            color: #444;
+            display: flex;
+            align-items: center;
+        }
+
+        .contact a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .contact a:hover {
+            text-decoration: underline;
+        }
+    </style>
+
+
+    <script>
+        function findHospitals() {
+            window.location.href = 'hospital.html';
+        }
+    </script>
+    
+    <script>
+        function sendWhatsAppSOS() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((position) => {
+                    let latitude = position.coords.latitude;
+                    let longitude = position.coords.longitude;
+                    let message = encodeURIComponent(`🚨 SOS Emergency!\n\nMy Location: https://www.google.com/maps?q=${latitude},${longitude}`);
+                    let phoneNumber = "9840712552"; // Replace with emergency contact number
+                    window.open(`https://wa.me/${phoneNumber}?text=${message}`, "_blank");
+                }, () => {
+                    alert("Unable to get location. Please enable GPS.");
+                });
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+    </script>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Burn Emergency Response</h2>
+        <button class="btn" onclick="findHospitals()">Find Nearby Hospitals</button>
+        <button class="btn sos-btn" onclick="sendWhatsAppSOS()">🚨 Send SOS on WhatsApp</button>
+
+        <div class="emergency">
+            <h3>Emergency Contacts</h3>
+
+            <div class="contact">
+                <span>🚑 Ambulance</span>
+                <a href="tel:108">Call 108</a>
+            </div>
+
+            <div class="contact">
+                <span>🚔 Police</span>
+                <a href="tel:100">Call 100</a>
+            </div>
+
+            <div class="contact">
+                <span>🔥 Fire Department</span>
+                <a href="tel:101">Call 101</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

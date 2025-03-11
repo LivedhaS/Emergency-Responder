@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Hospital Finder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Inside the <head> tag -->
+
+
+    <style>
+        body {
+            background-color: #181818;
+            color: #fff;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: #fff;
+            color: #000;
+            padding: 30px;
+            border-radius: 10px;
+            width: 450px;
+            text-align: center;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        }
+
+        h2 {
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-weight: 600;
+            width: 100%;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .dropdown {
+            margin: 15px 0;
+            text-align: left;
+        }
+
+        .dropdown label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        #ambulance-status {
+            margin-top: 15px;
+            font-weight: 500;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🏥 AI-Powered Emergency Responder</h2>
+
+        <div class="dropdown">
+            <p>Select the type of hospital you need:</p>
+            <label><input type="checkbox" name="specialty" value="Trauma Center"> Trauma Center</label>
+            <label><input type="checkbox" name="specialty" value="Cardiac Hospital"> Cardiac Hospital</label>
+            <label><input type="checkbox" name="specialty" value="Stroke Center"> Stroke Center</label>
+            <label><input type="checkbox" name="specialty" value="Burn Center"> Burn Center</label>
+            <label><input type="checkbox" name="specialty" value="Pediatric Emergency"> Pediatric Emergency</label>
+            <label><input type="checkbox" name="specialty" value="Maternity & Neonatal Emergency"> Maternity & Neonatal Emergency</label>
+        </div>
+
+        <button class="btn" onclick="findHospitals()">Search</button>
+        <button class="btn" onclick="window.location.href='index.html'">← Back to Home</button>
+
+        <p id="ambulance-status"></p>
+    </div>
+
+    <script>
+        function findHospitals() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(openGoogleMapsSearch, showError);
+            } else {
+                alert("Geolocation is not supported by your browser.");
+            }
+        }
+
+        function openGoogleMapsSearch(position) {
+            let userLat = position.coords.latitude;
+            let userLng = position.coords.longitude;
+
+            let selectedSpecialties = [];
+            document.querySelectorAll("input[name='specialty']:checked").forEach(checkbox => {
+                selectedSpecialties.push(checkbox.value);
+            });
+
+            if (selectedSpecialties.length === 0) {
+                alert("Please select at least one specialty.");
+                return;
+            }
+
+            const searchQuery = selectedSpecialties.join(" OR ") + " hospital near me";
+            const googleMapsSearchUrl = `https://www.google.com/maps/search/${encodeURIComponent(searchQuery)}/@${userLat},${userLng},14z`;
+
+            window.open(googleMapsSearchUrl, "_blank");
+            document.getElementById("ambulance-status").innerText = "🚑 Opening hospitals on Google Maps...";
+        }
+
+        function showError(error) {
+            alert("Error getting location: " + error.message);
+        }
+    </script>
+</body>
+</html>
