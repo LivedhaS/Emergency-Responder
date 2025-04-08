@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🚨 Tamil Nadu SOS Live Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Inside the <head> tag -->
+
+
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(to bottom right, #fff5f5, #ffeaea);
+      color: #333;
+    }
+
+    header {
+      background-color: #d63031;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    #map {
+      height: 600px;
+      width: 90%;
+      max-width: 1000px;
+      margin: 30px auto;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      border: 4px solid #ff4d4d;
+    }
+
+    footer {
+      text-align: center;
+      padding: 10px;
+      font-size: 14px;
+      color: #666;
+    }
+
+    /* Optional glowing alert animation */
+    .leaflet-marker-icon {
+      animation: pulse-red 2s infinite;
+    }
+
+    @keyframes pulse-red {
+      0% { filter: drop-shadow(0 0 2px #ff4d4d); }
+      50% { filter: drop-shadow(0 0 8px #ff4d4d); }
+      100% { filter: drop-shadow(0 0 2px #ff4d4d); }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>📍 Tamil Nadu Emergency SOS Live Dashboard</h1>
+    <p>Tracking real-time alerts across key cities in Tamil Nadu</p>
+  </header>
+
+  <div id="map"></div>
+
+  <footer>
+    Powered by Leaflet & OpenStreetMap | AI Emergency Response System
+  </footer>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <script>
+    // 1. Initialize the map centered over Tamil Nadu
+    var map = L.map('map').setView([11.1271, 78.6569], 7);
+
+    // 2. Load OpenStreetMap tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // 3. Red icon for SOS alerts
+    const redIcon = L.icon({
+      iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+      shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      shadowSize: [41, 41]
+    });
+
+    // 4. Tamil Nadu SOS alerts
+    const sosAlerts = [
+      { lat: 13.0827, lng: 80.2707, description: "🔥 Third-degree burn in Chennai. Oxygen required." },
+      { lat: 11.6643, lng: 78.1460, description: "🚑 Accident in Salem. Immediate ambulance needed." },
+      { lat: 8.7378, lng: 77.7081, description: "🩸 Patient unconscious in Tirunelveli." },
+      { lat: 10.7905, lng: 78.7047, description: "🔥 Burn injury in Trichy. Need first aid." },
+      { lat: 12.9165, lng: 79.1325, description: "🚨 Road accident in Vellore. Bleeding profusely." },
+      { lat: 9.9252, lng: 78.1198, description: "🚨 Injury reported in Madurai. Blood loss critical." },
+      { lat: 11.3410, lng: 77.7172, description: "🔥 Gas leak burn in Erode. Urgent response." },
+      { lat: 10.9601, lng: 76.9506, description: "🚑 Crash in Coimbatore. Patient unresponsive." },
+      { lat: 11.0561, lng: 77.3403, description: "🔥 House fire in Tiruppur. Victim trapped." },
+      { lat: 13.0108, lng: 80.2321, description: "🩸 Severe bleeding in North Chennai. Medical help!" }
+    ];
+
+    // 5. Add markers to map
+    sosAlerts.forEach(alert => {
+      const marker = L.marker([alert.lat, alert.lng], { icon: redIcon }).addTo(map);
+      marker.bindPopup(`<b>${alert.description}</b>`);
+    });
+  </script>
+
+</body>
+</html>

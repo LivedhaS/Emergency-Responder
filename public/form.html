@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Patient Details</title>
+
+  <!-- QR Code Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<!-- Inside the <head> tag -->
+
+
+  <style>
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #111;
+      color: #fff;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-y: auto;
+    }
+
+    .wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px;
+      width: 100%;
+      min-height: 100%;
+    }
+
+    form {
+      background: #fff;
+      color: #000;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+      width: 100%;
+      max-width: 500px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    label {
+      margin-top: 12px;
+      font-size: 15px;
+      display: block;
+    }
+
+    input {
+      padding: 10px;
+      margin-top: 6px;
+      font-size: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      width: 100%;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 12px;
+      width: 100%;
+      background: #007bff;
+      color: white;
+      border: none;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+#qrCode {
+  display: inline-block;
+  margin: 0 auto;
+}
+
+
+    #qr-container {
+  text-align: center;
+  margin-top: 20px;
+  display: none;
+}
+
+  </style>
+</head>
+<body>
+  <form id="patientForm">
+    <h2>Patient Details</h2>
+
+    <label>Name:</label>
+    <input type="text" id="name" required>
+
+    <label>Blood Group:</label>
+    <input type="text" id="bloodGroup" required>
+
+    <label>Allergies:</label>
+    <input type="text" id="allergies">
+
+    <label>Medications:</label>
+    <input type="text" id="medications">
+
+    <label>Medical Conditions:</label>
+    <input type="text" id="medicalConditions">
+
+    <label>Emergency Contact Name:</label>
+    <input type="text" id="contactName" required>
+
+    <label>Emergency Contact Number:</label>
+    <input type="tel" id="contactNumber" required>
+
+    <button type="button" onclick="saveData()">Save</button>
+
+    <div id="qr-container">
+      <h3>Your QR Code:</h3>
+      <div id="qrCode"></div>
+      <br>
+      <button type="button" onclick="downloadQR()">Download QR Code</button>
+    </div>
+  </form>
+
+  <script>
+    function saveData() {
+      const data = {
+        name: document.getElementById("name").value,
+        bloodGroup: document.getElementById("bloodGroup").value,
+        allergies: document.getElementById("allergies").value,
+        medications: document.getElementById("medications").value,
+        medicalConditions: document.getElementById("medicalConditions").value,
+        contactName: document.getElementById("contactName").value,
+        contactNumber: document.getElementById("contactNumber").value,
+      };
+
+      fetch("/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      })
+      .then(res => res.text())
+      .then(msg => {
+        alert(msg);
+        generateQRCode(JSON.stringify(data));
+      })
+      .catch(err => alert("Error: " + err));
+    }
+
+    function generateQRCode(data) {
+      document.getElementById("qr-container").style.display = "block";
+      document.getElementById("qrCode").innerHTML = "";
+      new QRCode(document.getElementById("qrCode"), {
+        text: data,
+        width: 200,
+        height: 200,
+      });
+    }
+
+    function downloadQR() {
+      const canvas = document.querySelector("#qrCode canvas");
+      if (!canvas) {
+        alert("QR Code not generated yet.");
+        return;
+      }
+      const link = document.createElement("a");
+      link.href = canvas.toDataURL("image/png");
+      link.download = "patient_qr.png";
+      link.click();
+    }
+  </script>
+</body>
+</html>

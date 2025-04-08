@@ -1,0 +1,9 @@
+{
+    "name": "Emergency Response",
+    "short_name": "Emergency",
+    "start_url": "index.html",
+    "display": "standalone",
+    "theme_color": "#ffffff",
+    "background_color": "#ffffff"
+  }
+  

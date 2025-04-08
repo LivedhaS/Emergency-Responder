@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <!-- Inside the <head> tag -->
+
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+       body {
+            background-color: #1e1e1e;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .navbar {
+            background-color: #343a40;
+            padding: 15px 20px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        .navbar-brand {
+            font-size: 28px;
+            font-weight: bold;
+            text-transform: uppercase;
+            width: 100%;
+            text-align: center;
+        }
+        .container {
+            flex: 1;
+            padding-bottom: 50px;
+        }
+        .list-group-item {
+            background-color: #2c2c2c;
+            color: white;
+            border: 1px solid #444;
+        }
+        #articles-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        canvas {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 10px;
+        }
+        .chart-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .chart-box {
+            width: 100%;
+            max-width: 48%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        #indiaStatsChart,#ageDistributionChart, #elderlyVsChildrenChart {
+            max-width: 400px;
+            max-height: 350px;
+            margin: 0 auto;
+            display: block;
+            margin-top: 15px;
+        }
+        #pediatricChart,#restaurantChart,#ohcaChart,#cprSurvivalChart ,#heatmap_chart,#sankey_chart{
+            width: 400px !important;
+            height: 250px !important;
+            margin-left: 70px;
+            margin-top: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .chart-box {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <span class="navbar-brand">Research Dashboard</span>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <h3>📄 Research Articles</h3>
+                <div id="articles-list" class="list-group mt-2"></div>
+            </div></div>
+
+    <div class="row mt-5">
+            <div class="col-12">
+                <h3>🌍 WHO Burn Data & Insights</h3>
+                <p><strong>🔥 Global Impact:</strong> 8.3 million burn cases in 2019, with 111,292 deaths.</p>
+                <p><strong>🇮🇳  India:</strong> Over 1 million moderate to severe burn cases annually.</p>
+                <p><strong>👶 High Risk:</strong> Women & children under 5 are most affected.</p>
+                <p><strong>💰 Economic Impact:</strong> Treatment costs average $88,218 per patient.</p>
+            </div>
+        </div>
+
+    <div class="row mt-5">
+            <div class="col-md-6">
+                <h3>📊 Burn Statistics (World)</h3>
+                <canvas id="worldStatsChart"></canvas>
+            </div>
+            <div class="col-md-6 text-center">
+                <h3>📊 Burn Statistics (India)</h3>
+                <canvas id="indiaStatsChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const articles = [
+            { url: "https://stemcellres.biomedcentral.com/articles/10.1186/s13287-024-03901-2", title: "Advancements in cell-based therapies for burn wounds - Stem Cell Research (2024)", date: "2024-02-01" },
+            { url: "https://www.tandfonline.com/doi/full/10.1080/10717544.2023.2300945#abstract", title: "Hydrogel for Burn Wound Treatment - Drug Delivery (2024)", date: "2024-01-15" },
+            { url: "https://academic.oup.com/jbcr/article/45/4/1041/7633591", title: "Pathophysiology of Severe Burns - Journal of Burn Care & Research (2024)", date: "2023-12-20" },
+            { url: "https://academic.oup.com/jbcr/article/44/Supplement_1/S13/6681407", title: "Burn Wound Bed Management - JBCR (2023)", date: "2023-02-01" },
+            { url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC7224101/#:~:text=A%20recent%20study%20demonstrated%20that,also%20discuss%20promising%20future%20therapies.", title: "Burn Injury Overview - Nature Reviews (2020)", date: "2020-01-01" }
+        ];
+
+        function renderArticles() {
+            const articlesList = document.getElementById("articles-list");
+            articlesList.innerHTML = "";
+            articles.sort((a, b) => new Date(b.date) - new Date(a.date));
+            articles.forEach((article, index) => {
+                const articleElement = document.createElement("a");
+                articleElement.href = article.url;
+                articleElement.target = "_blank";
+                articleElement.className = "list-group-item list-group-item-action";
+                articleElement.innerText = `${index + 1}. ${article.title}`;
+                articlesList.appendChild(articleElement);
+            });
+        }
+
+        renderArticles();
+
+        const worldCtx = document.getElementById('worldStatsChart').getContext('2d');
+        new Chart(worldCtx, {
+            type: 'bar',
+            data: {
+                labels: ['New Cases', 'Deaths', 'DALYs'],
+                datasets: [{
+                    label: 'Burn Statistics (2019)',
+                    data: [8378122, 111292, 7460448],
+                    backgroundColor: ['blue', 'red', 'green']
+                }]
+            }
+        });
+
+        const indiaCtx = document.getElementById('indiaStatsChart').getContext('2d');
+        new Chart(indiaCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Female Patients', 'Male Patients', 'Flame Burns', 'Hot Liquid Burns', 'Suicidal Burns'],
+                datasets: [{
+                    data: [66.8, 38.2, 80.1, 12.2, 6.82],
+                    backgroundColor: ['pink', 'blue', 'orange', 'yellow', 'red']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+    </script>
+<br> </br>
+<h2 class="text-center">Choking & Emergency Statistics Visualizations</h2>
+<p class="text-center">Key insights on choking incidents, age distribution, and emergency response—because every second counts. Understand the risks, compare trends, and see the impact of quick intervention.</p>
+    <div class="row mt-5 justify-content-center">
+        <div class="col-md-6 text-center">
+            <h3>📊Pediatric Choking Outcomes</h3>
+            <canvas id="pediatricChart" width="420" height="210" style="display: block; box-sizing: border-box; width: 336px; height: 168px;"></canvas>
+        </div>
+        <div class="col-md-6 text-center">
+            <h3>📊Age Distribution of Choking Deaths (Children)</h3>
+            <canvas id="ageDistributionChart"></canvas>
+        </div>
+    </div>
+
+    <div class="row mt-5 justify-content-center">
+        <div class="col-md-6 text-center">
+            <h3>Choking Deaths: Elderly vs. Children</h3>
+            <canvas id="elderlyVsChildrenChart"></canvas>
+        </div>
+        <div class="col-md-6 text-center">
+            <h3>Restaurant Choking Incidents & Response Rate</h3>
+            <canvas id="restaurantChart"></canvas>
+        </div>
+    </div>
+<br></br>
+    <h2 class="mt-5 text-center">Impact of Immediate Emergency Response</h2>
+    <p class="text-center">Delays in CPR and emergency interventions drastically reduce survival rates.</p>
+
+
+    <div class="row mt-5 justify-content-center">
+        <div class="col-md-6 text-center">
+            <h3>📈Survival Rate Decrease per Minute without CPR</h3>
+            <canvas id="cprSurvivalChart"></canvas>
+        </div>
+        <div class="col-md-6 text-center">
+            <h3>📊Annual Out-of-Hospital Cardiac Arrest Incidence</h3>
+            <canvas id="ohcaChart"></canvas>
+        </div>
+    </div>
+    <br></br>
+    <h2 class="mt-5 text-center">Understanding Trauma Outcomes and Patterns</h2>
+    <p class="text-center">Effective analysis of trauma cases helps identify critical factors influencing survival rates, injury types, and treatment effectiveness. The following visualizations provide insights into patient outcomes and the distribution of key risk factors</p>
+
+    <div class="row mt-5 justify-content-center">
+        <!-- Sankey Diagram -->
+        <div class="col-md-6 text-center">
+            <h3>🔀 Trauma Death Causes & Hemorrhage Contribution</h3>
+            <div id="sankey_chart" style="width: 90%; height: 400px;"></div>
+        </div>
+    
+        <!-- Heatmap -->
+        <div class="col-md-6 text-center">
+            <h3>🔥 Survival Probability vs. Response Time</h3>
+            <canvas id="heatmap_chart"></canvas>
+        </div>
+    </div>
+    
+
+    <script>
+        const pediatricCtx = document.getElementById('pediatricChart').getContext('2d');
+        new Chart(pediatricCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Mechanical Ventilation', 'In-Hospital Mortality'],
+                datasets: [{
+                label: 'Percentage',
+                data: [21.2, 2.5],
+                backgroundColor: ['coral', 'bisque']  // Changed colors for differentiation
+        }]
+    }
+});
+
+        new Chart(document.getElementById('ageDistributionChart').getContext('2d'), {
+            type: 'pie',
+            data: {
+                labels: ['< 1 Year', '< 3 Years', 'Other'],
+                datasets: [{
+                    data: [50, 65, 35],
+                    backgroundColor: ['orange', 'red', 'gray']
+                }]
+            }
+        });
+        
+        new Chart(document.getElementById('elderlyVsChildrenChart').getContext('2d'), {
+            type: 'pie',
+            data: {
+                labels: ['Elderly (>65)', 'Children (1-4)'],
+                datasets: [{
+                    data: [7, 1],
+                    backgroundColor: ['pink', 'blue']
+                }]
+            }
+        });
+        
+        new Chart(document.getElementById('restaurantChart').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: ['Choking Cases in Restaurants', 'Received Resuscitation'],
+                datasets: [{
+                    label: 'Number of Cases',
+                    data: [19, 1],
+                    backgroundColor: ['deepskyblue', 'darksalmon']
+                }]
+            }
+        });
+        
+        new Chart(document.getElementById('cprSurvivalChart').getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: ['1 min', '2 min', '3 min', '4 min', '5 min', '6 min', '7 min', '8 min', '9 min', '10 min'],
+                datasets: [{
+                    label: 'Survival Rate (%)',
+                    data: [100, 93, 86, 79, 72, 65, 58, 51, 44, 37],
+                    borderColor: 'red',
+                    fill: false
+                }]
+            }
+        });
+        
+        new Chart(document.getElementById('ohcaChart').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: ['USA', 'Canada (per 1,000)', 'Europe (per 100,000)'],
+                datasets: [{
+                    label: 'Incidence',
+                    data: [35600, 540, 555],
+                    backgroundColor: ['azure', 'yellow', 'pink']
+                }]
+            }
+        });
+
+        google.charts.load('current', {'packages': ['sankey']});
+    google.charts.setOnLoadCallback(drawSankeyChart);
+
+    function drawSankeyChart() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'From');
+        data.addColumn('string', 'To');
+        data.addColumn('number', 'Cases');
+
+        data.addRows([
+            ['Total Trauma Cases', 'Survived', 40000],
+            ['Total Trauma Cases', 'Fatalities', 20000],
+            ['Fatalities', 'CNS Injury', 8000],
+            ['Fatalities', 'Hemorrhage', 9000],
+            ['Fatalities', 'Other Causes', 3000]
+        ]);
+
+        var options = {
+            sankey: { node: { label: { fontSize: 14 } }, link: { color: { fill: '#ddd' } } },
+            backgroundColor: '#1e1e1e'
+        };
+
+        var chart = new google.visualization.Sankey(document.getElementById('sankey_chart'));
+        chart.draw(data, options);
+    }
+
+    // Heatmap Chart
+    const heatmapCtx = document.getElementById('heatmap_chart').getContext('2d');
+    const heatmapData = {
+        labels: ['0-5 min', '5-10 min', '10-15 min', '15-20 min', '20+ min'],
+        datasets: [{
+            label: 'Mild Injury',
+            data: [95, 85, 75, 60, 50],
+            backgroundColor: 'rgba(0, 255, 0, 0.5)'
+        }, {
+            label: 'Moderate Injury',
+            data: [90, 75, 60, 45, 30],
+            backgroundColor: 'rgba(255, 165, 0, 0.5)'
+        }, {
+            label: 'Severe Injury',
+            data: [80, 60, 40, 20, 5],
+            backgroundColor: 'rgba(255, 0, 0, 0.5)'
+        }]
+    };
+
+    new Chart(heatmapCtx, {
+        type: 'bar',
+        data: heatmapData,
+        options: {
+            plugins: { legend: { display: true } },
+            scales: { y: { beginAtZero: true, max: 100 } },
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+    </script>
+</body>
+</html>

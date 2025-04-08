@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Inside the <head> tag -->
+
+
+    <title>Burn Treatment Guide</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        #treatmentContainer {
+            margin-top: 20px;
+            display: none;
+        }
+        select {
+            padding: 10px;
+            font-size: 16px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        ul li {
+            background: #f8d7da;
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+        }
+        iframe {
+            margin-top: 10px;
+            width: 80%;
+            max-width: 560px;
+            height: 315px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🔥 Burn Treatment Guide</h1>
+
+    <label for="burnType">Select Burn Type:</label>
+    <select id="burnType" onchange="showTreatment()">
+        <option value="">--Select--</option>
+        <option value="first">First-Degree Burn</option>
+        <option value="second">Second-Degree Burn</option>
+    </select>
+
+    <div id="treatmentContainer">
+        <h2 id="burnTitle"></h2>
+        <ul id="treatmentSteps"></ul>
+        <iframe id="burnVideo" allowfullscreen></iframe>
+    </div>
+
+    <script>
+        const burnVideos = {
+            first: {
+                url: "https://www.youtube.com/embed/_tpf-VXVvSk", // Embedded YouTube link
+                steps: [
+                    "Run cool (not cold) water over the burn for 10-15 minutes.",
+                    "Apply aloe vera or a moisturizing lotion.",
+                    "Cover with a sterile, non-stick bandage.",
+                    "Avoid popping blisters if they form.",
+                    "Take pain relievers if needed."
+                ]
+            },
+            second: {
+                url: "https://www.youtube.com/embed/FfXyiFJv_EY", // Embedded YouTube link
+                steps: [
+                    "Soak the burn in cool water for 15 minutes.",
+                    "Apply antibiotic ointment and loosely cover with a sterile bandage.",
+                    "Do not break blisters.",
+                    "Seek medical attention if severe."
+                ]
+            }
+        };
+
+        function showTreatment() {
+            const burnType = document.getElementById("burnType").value;
+            const treatmentContainer = document.getElementById("treatmentContainer");
+            const burnTitle = document.getElementById("burnTitle");
+            const treatmentSteps = document.getElementById("treatmentSteps");
+            const burnVideo = document.getElementById("burnVideo");
+
+            if (burnType) {
+                burnTitle.innerText = burnType === "first" ? "First-Degree Burn Treatment" : "Second-Degree Burn Treatment";
+                treatmentSteps.innerHTML = burnVideos[burnType].steps.map(step => <li>${step}</li>).join("");
+                burnVideo.src = burnVideos[burnType].url; // Set the YouTube video URL
+                treatmentContainer.style.display = "block";
+            } else {
+                treatmentContainer.style.display = "none";
+            }
+        }
+    </script>
+
+</body>
+</html>

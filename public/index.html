@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="manifest" href="manifest.json" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Burns Information</title>
+    <link rel="stylesheet" href="index.css">  <!-- Ensure the correct path -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+    .chatbot-btn, .emergency-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            color: white;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+            gap: 8px;
+            transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+        }
+        /* Chatbot Button Styling */
+        .chatbot-btn {
+            background-color: #007bff; /* Blue */
+        }
+
+        .chatbot-btn:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+            box-shadow: 0 0 10px #007bff;
+        }
+
+        /* Emergency Button Styling */
+        .emergency-btn {
+            background-color: #dc3545; /* Red */
+            bottom: 80px; /* Slightly above chatbot button */
+        }
+
+        .emergency-btn:hover {
+            background-color: #c82333;
+            transform: scale(1.05);
+            box-shadow: 0 0 10px #dc3545;
+        }
+
+        /* Chatbot Popup */
+        .chatbot-container {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 350px;
+            height: 500px;
+            background: #1e1e1e;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            display: none;
+            flex-direction: column;
+            transition: opacity 0.3s, transform 0.3s;
+        }
+
+        .chatbot-container.show {
+            display: flex;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .chatbot-container.hide {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        /* Chatbot Close Button */
+        .chatbot-header {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            position: relative;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        .close-btn {
+            position: absolute;
+            right: 10px;
+            top: 5px;
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: white;
+            cursor: pointer;
+        }
+
+        /* Chatbot Message Area */
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            height: 350px;
+            display: flex;
+            flex-direction: column;
+            background: #2e2e2e;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+
+        /* Chatbot Input */
+        .chat-input {
+            display: flex;
+            border-top: 1px solid #444;
+            background: #1e1e1e;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            outline: none;
+            background: #2e2e2e;
+            color: white;
+            border-bottom-left-radius: 10px;
+        }
+
+        .chat-input button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-bottom-right-radius: 10px;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        .chat-input button:hover {
+            background: #0056b3;
+            box-shadow: 0 0 10px #007bff;
+        }
+
+        /* Chat Messages */
+        .message {
+            padding: 8px;
+            border-radius: 5px;
+            margin: 5px 0;
+            max-width: 80%;
+            word-wrap: break-word;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        .user {
+            align-self: flex-end;
+            background-color: #007bff;
+            color: white;
+            box-shadow: 0 0 10px #007bff;
+        }
+
+        .bot {
+            align-self: flex-start;
+            background-color: #444;
+            color: white;
+            box-shadow: 0 0 10px #444;
+        }
+
+        /* Emergency Modal (Popup) */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.3s;
+}
+
+.modal.show {
+    display: flex;
+    opacity: 1;
+}
+
+.modal.hide {
+    opacity: 0;
+}
+
+.modal-content {
+    position: relative; /* Ensure the close button is positioned relative to the modal content */
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    width: 400px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s;
+}
+
+.modal-content.show {
+    transform: translateY(0);
+}
+
+.modal-content.hide {
+    transform: translateY(20px);
+}
+
+        .modal h2 {
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .find-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+            width: 100%;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .find-btn:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+            box-shadow: 0 0 10px #007bff;
+        }
+
+        .close-btn {
+            background: red;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+        }
+
+        .close-btn:hover {
+            background: darkred;
+            transform: scale(1.05);
+            box-shadow: 0 0 10px red;
+        }
+
+        .contact {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f8f8f8;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 5px 0;
+        }
+
+        .contact span {
+            font-size: 16px;
+            font-weight: 500;
+            color: #444;
+            display: flex;
+            align-items: center;
+        }
+
+        .contact a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .contact a:hover {
+            text-decoration: underline;
+        }
+        /* SOS Button Styling */
+.sos-btn {
+    position: fixed;
+    top: 20px; /* Position at the top */
+    right: 20px; /* Adjust as needed */
+    padding: 14px 28px;
+    background: #ff0033;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    z-index: 1001;
+    box-shadow: 0 0 12px rgba(255, 0, 0, 0.6);
+    animation: pulse 1.5s infinite;
+    transition: transform 0.2s ease-in-out, background 0.3s;
+}
+
+.sos-btn:hover {
+    background: #cc0029;
+    transform: scale(1.05);
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 10px rgba(255, 0, 0, 0.6);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(255, 0, 0, 1);
+    }
+    100% {
+        box-shadow: 0 0 10px rgba(255, 0, 0, 0.6);
+    }
+}
+        
+/* Close Button Styling */
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: red;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+}
+
+.close-btn:hover {
+    background: darkred;
+    transform: scale(1.05);
+    box-shadow: 0 0 10px red;
+}
+
+
+        .sos-btn:hover {
+            background: #cc0029;
+            transform: scale(1.05);
+        }
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 10px rgba(255, 0, 0, 0.6);
+            }
+            50% {
+                box-shadow: 0 0 20px rgba(255, 0, 0, 1);
+            }
+            100% {
+                box-shadow: 0 0 10px rgba(255, 0, 0, 0.6);
+            }
+        }
+
+        .flash-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            opacity: 0;
+            z-index: 1;
+            pointer-events: none;
+            transition: opacity 0.1s ease;
+        }
+    </style>
+
+</head>
+<body>
+
+<!-- Hidden full-screen flash overlay -->
+<div id="sosFlash" style="
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: red;
+  opacity: 0;
+  z-index: 9999;
+  pointer-events: none;
+"></div>
+</head>
+<body>
+
+<!-- Hidden full-screen flash overlay -->
+<div id="sosFlash" class="flash-overlay"></div>
+<!-- Emergency Modal -->
+<div id="emergencyModal" class="modal">
+    <div class="modal-content">
+        <button class="close-btn" onclick="closeModal()">✖</button>
+        <h2>Emergency Options</h2>
+        <button class="find-btn" onclick="findHospitals()">Find Nearby Hospitals</button>
+        <button class="find-btn" onclick="sendWhatsAppSOS()">Send WhatsApp SOS</button>
+    </div>
+</div>
+
+<script>
+function closeModal() {
+    document.getElementById("emergencyModal").style.display = "none";
+}
+</script>
+
+<!-- Existing Content -->
+    <div class="container">
+        <h1>SwiftAid: AI-powered Emergency Responder Web Application</h1>
+        <p>An AI-powered emergency response platform offering real-time first aid guidance, injury detection, and nearby help to save lives faster.</p>
+
+        <div class="button-container">
+            <a href="login.html" class="btn">Login</a>
+            <a href="register.html" class="btn">Register</a>
+            <a href="resources.html" class="btn">Resources</a>
+        
+
+        
+        </div>
+    </div>
+        <!-- Overview Section -->
+    <div class="overview">
+        <h2>🔥 Overview</h2>
+        <p>A unified web platform that empowers users with AI-driven first aid support, emergency tools, and life-saving resources at their fingertips.</p>
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="faq">
+        <h2>Frequently Asked Questions</h2>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleAnswer(0)">
+                <span>🩹 What is the purpose of this website?</span>
+                <span>&#9662;</span>
+            </div>
+            <div class="faq-answer">
+                To provide real-time AI-powered first aid guidance and SOS features during medical emergencies.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleAnswer(1)">
+                <span>📌 How do QR-based patient records help?</span>
+                <span>&#9662;</span>
+            </div>
+            <div class="faq-answer">
+                Scanning a patient's QR gives emergency responders quick access to their medical history, allergies, and conditions.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleAnswer(2)">
+                <span>⚠ Can I access nearby hospitals using this app?</span>
+                <span>&#9662;</span>
+            </div>
+            <div class="faq-answer">
+                Yes, the app fetches nearby hospitals using Geolocation and displays them, along with specialty filters.
+                
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleAnswer(3)">
+                <span>🔴 How does the burn/wound classification work?</span>
+                <span>&#9662;</span>
+            </div>
+            <div class="faq-answer">
+                The system uses a MobileNet-based model to classify image inputs as mild, moderate, or severe and provides treatment guidance.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleAnswer(4)">
+                <span>💊Is the emergency chatbot available 24/7?</span>
+                <span>&#9662;</span>
+            </div>
+            <div class="faq-answer">
+                Yes, the chatbot is AI-powered and always ready to assist with burn-related queries.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleAnswer(5)">
+                <span>⚡ How does the SOS system work?	</span>
+                <span>&#9662;</span>
+            </div>
+            <div class="faq-answer">
+                It uses the Geolocation API to detect your location and sends alerts via WhatsApp or other means to nearby trauma centers or emergency contacts.
+            </div>
+        </div>
+    </div>
+        <script>
+        function toggleAnswer(index) {
+            const answers = document.querySelectorAll('.faq-answer');
+            const icons = document.querySelectorAll('.faq-question span:last-child');
+
+            if (answers[index].style.display === 'block') {
+                answers[index].style.display = 'none';
+                icons[index].innerHTML = '&#9662;';
+            } else {
+                answers[index].style.display = 'block';
+                icons[index].innerHTML = '&#9652;';
+            }
+        }
+    </script>
+<p id="healthTip"></p>
+<script>
+    const tips = [
+        "Drink 8 glasses of water daily!",
+        "Get at least 7 hours of sleep.",
+        "Exercise for 30 minutes every day!",
+        "Avoid junk food & eat fresh vegetables."
+    ];
+    document.getElementById("healthTip").innerText = 
+        tips[Math.floor(Math.random() * tips.length)];
+</script>
+
+
+<!-- Chatbot Button -->
+    <button class="chatbot-btn" onclick="toggleChatbot()">💬 Chat with us</button>
+    <button class="emergency-btn" onclick="openModal()">🚨 Emergency</button>
+    <button onclick="triggerSOS()" class="sos-btn">🚨 SOS</button>
+    <audio id="sosSound" src="siren.mp3" preload="auto"></audio>
+    
+    <!-- Chatbot Container -->
+    <div class="chatbot-container" id="chatbot">
+        <div class="chatbot-header">
+            Chatbot
+            <button class="close-btn" onclick="toggleChatbot()">✖</button>
+        </div>
+        <div class="chat-messages" id="messages"></div>
+        <div class="chat-input">
+            <input type="text" id="userInput" placeholder="Type a message..." onkeypress="handleKeyPress(event)">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        async function sendMessage() {
+            const userInput = document.getElementById("userInput").value.trim();
+            if (!userInput) return;
+
+            const messagesDiv = document.getElementById("messages");
+
+            // Append User Message
+            messagesDiv.innerHTML += `<div class="message user"><strong>You:</strong> ${userInput}</div>`;
+            document.getElementById("userInput").value = "";
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+            // Replace with your actual API key
+            const API_KEY = "AIzaSyD2_9YRlBiM_K50zgWBlYfq4rPNZjCLCnw"; 
+            const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+
+            const response = await fetch(API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    contents: [{ role: "user", parts: [{ text: userInput }] }]
+                })
+            });
+
+            const data = await response.json();
+            console.log("API Response:", data);
+
+            let reply = "Sorry, I couldn't process that.";
+
+            if (data && data.candidates && data.candidates.length > 0) {
+                if (data.candidates[0].content && data.candidates[0].content.parts.length > 0) {
+                    reply = data.candidates[0].content.parts[0].text;
+                }
+            }
+
+            // Replace bot introduction and remove any mention of Google
+            reply = reply.replace(/I am a large language model, trained by Google\./g, "I'm SwiftAid bot");
+
+            // Check if user requested paragraph format
+            if (!userInput.toLowerCase().includes("i want it as a para")) {
+                // Format reply with bullet points and paragraphs
+                reply = reply.split('\n').map(line => {
+                    if (line.startsWith('*')) {
+                        return `<li>${line.substring(1).trim()}</li>`;
+                    } else {
+                        return `<p>${line.trim()}</p>`;
+                    }
+                }).join('');
+                reply = `<ul>${reply}</ul>`;
+            } else {
+                // Format as a single paragraph
+                reply = `<p>${reply}</p>`;
+            }
+
+            // Replace bold text markers with HTML bold tags
+            reply = reply.replace(/\*(.*?)\*/g, '<strong>$1</strong>');
+
+            // Append Bot Message
+            messagesDiv.innerHTML += `<div class="message bot"><strong>Bot:</strong> ${reply}</div>`;
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function toggleChatbot() {
+            const chatbot = document.getElementById("chatbot");
+            if (chatbot.style.display === "none" || chatbot.style.display === "") {
+                chatbot.style.display = "flex";
+            } else {
+                chatbot.style.display = "none";
+            }
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+        }
+    </script>
+    
+
+
+<script>
+    async function triggerSOS() {
+        // Flash screen multiple times
+        flashMultipleTimes(9);
+
+        // Play audio
+        const audio = document.getElementById("sosSound");
+        try {
+            audio.currentTime = 0;
+            audio.volume = 1.0;
+            await audio.play();
+        } catch (err) {
+            console.warn("Audio play failed:", err);
+        }
+
+        // Try torch
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+            const track = stream.getVideoTracks()[0];
+
+            if ('ImageCapture' in window) {
+                const imageCapture = new ImageCapture(track);
+                const capabilities = await imageCapture.getPhotoCapabilities();
+
+                if (capabilities.torch) {
+                    await track.applyConstraints({ advanced: [{ torch: true }] });
+                    setTimeout(() => track.stop(), 1000);
+                } else {
+                    console.warn("Torch not supported.");
+                    track.stop();
+                }
+            } else {
+                console.warn("ImageCapture not supported.");
+                track.stop();
+            }
+        } catch (err) {
+            console.warn("Camera access error:", err);
+        }
+    }
+
+    function flashMultipleTimes(times) {
+        const flash = document.getElementById("sosFlash");
+        let count = 0;
+
+        function doFlash() {
+            if (count >= times) return;
+            flash.style.opacity = 1;
+            setTimeout(() => {
+                flash.style.opacity = 0;
+                count++;
+                setTimeout(doFlash, 150);
+            }, 150);
+        }
+
+        doFlash();
+    }
+</script>
+
+
+<script>
+        function openModal() {
+            document.getElementById("emergencyModal").style.display = "flex";
+        }
+
+        function closeModal() {
+            document.getElementById("emergencyModal").style.display = "none";
+        }
+
+        function findHospitals() {
+            
+            window.location.href = 'hospital.html';
+        
+        }
+        function sendWhatsAppSOS() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((position) => {
+                    let latitude = position.coords.latitude;
+                    let longitude = position.coords.longitude;
+                    let message = encodeURIComponent(`🚨 SOS Emergency!\n\nMy Location: https://www.google.com/maps?q=${latitude},${longitude}`);
+                    let phoneNumber = "9840712552"; // Replace with emergency contact number
+                    window.open(`https://wa.me/${phoneNumber}?text=${message}`, "_blank");
+                }, () => {
+                    alert("Unable to get location. Please enable GPS.");
+                });
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+    </script>
+    <script>
+        function sendWhatsAppSOS() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((position) => {
+                    let latitude = position.coords.latitude;
+                    let longitude = position.coords.longitude;
+                    let message = encodeURIComponent(`🚨 SOS Emergency!\n\nMy Location: https://www.google.com/maps?q=${latitude},${longitude}`);
+                    let phoneNumber = "9840712552"; // Replace with emergency contact number
+                    window.open(`https://wa.me/${phoneNumber}?text=${message}`, "_blank");
+                }, () => {
+                    alert("Unable to get location. Please enable GPS.");
+                });
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+    </script>
+
+
+</body>
+</html>
